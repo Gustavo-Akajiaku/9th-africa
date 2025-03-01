@@ -5,6 +5,8 @@ import * as Yup from "yup";
 import "./../globals.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import LoadingScreen from "../loading";
 
 const initialValues = {
   email: "",
@@ -23,13 +25,14 @@ const validationSchema = Yup.object({
 
 const page = () => {
   const [isLogin, setLogin] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const router = useRouter()
+  const [isSuccess, setIsSuccess] = useState(true);
 
   const login = async (values, onSubmitProps) => {
     onSubmitProps.setSubmitting(false);
     onSubmitProps.resetForm();
     setLogin(true);
-    setIsSuccess(true);
+    setIsSuccess(false);
 
     try {
       const data = await axios.post(
@@ -44,31 +47,34 @@ const page = () => {
       );
 
       console.log(data);
+      const userId = data.data.data.vendor._id
 
-      if (data.status === 200 && data.data.vendor.role === "vendor") {
-        setIsSuccess(true);
+      if (data.status === 200 && data.data.data.vendor.role === "vendor") {
         window.alert(data.data.message)
+        router.push(`/vendor-dashboard/signed-in?userId=${userId}`);
         return;
       }
 
-      if (data.status === 200 && data.data.customer.role === "customer") {
-        setIsSuccess(true);
+      else if (data.status === 200 && data.data.data.customer.role === "customer") {
         window.alert(data.data.message);
+        router.push(`/customer-dashboard/signed-in?userId=${userId}`);
         return;
       }
 
-      if (data.status !== 200) {
-        window.alert('Authentication failed');
-        setIsSuccess(false);
-        return;
-      }
+      window.alert("Authentication failed");
+      setIsSuccess(true);
+      return;
     } catch (err) {
-      setIsSuccess(false);
+      setIsSuccess(true);
       setLogin(false);
-      window.alert("Authentication failed.");
+      window.alert(err.response.data.message);
       return;
     }
   };
+
+  if (!isSuccess) {
+    return <LoadingScreen />;
+  }
 
   return (
     <>

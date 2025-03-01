@@ -47,6 +47,44 @@ a {
   border: 2px solid #f00404;
 }
 
+.loading-modal {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    opacity: 1;
+    z-index: 100000;
+    visibility: visible;
+    pointer-events: all;
+  }
+
+/* Loading spinner */
+.loader {
+    border-width: 6px;
+    border-style: solid;
+    border-radius: 50%;
+    border-top-width: 6px;
+    border-top-style: solid;
+    width: 60px; height: 60px;
+    -webkit-animation: spin 0.5s linear infinite;
+    animation: spin 0.5s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

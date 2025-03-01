@@ -14,6 +14,11 @@ export default function middleware(request) {
       return NextResponse.next();
     }
 
+    if (request.url.includes("/api/auth/dashboard/:path*")) {
+      const logResult = logMiddleware(request);
+      console.log(logResult.response);
+    }
+
     const authResult = authMiddleware(request)
     if (!authResult.isValid) {
         return new NextResponse(

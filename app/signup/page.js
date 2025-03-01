@@ -6,11 +6,13 @@ import "./../globals.css";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import LoadingScreen from "../loading";
 
 const initialValues = {
   fullname: "",
   email: "",
   password: "",
+  role: "",
   confirmPass: "",
   phoneNumber: "",
 };
@@ -44,6 +46,7 @@ const page = () => {
     onSubmitProps.setSubmitting(false);
     onSubmitProps.resetForm();
     setSignup(true);
+    setIsSuccess(false)
 
     try {
       const data = await axios.post(
@@ -69,15 +72,19 @@ const page = () => {
 
       setIsSuccess(true);
       setSignup(false);
-      window.alert("Authentication failed!");
+      window.alert(data.data.message);
       return;
     } catch (err) {
       setIsSuccess(true);
       setSignup(false);                                   
-      window.alert("Authentication failed!");
+      window.alert(err.response.data.message);
       return
     }
   };
+
+  if (!isSuccess) {
+    return <LoadingScreen />;
+  }
 
   return (
     <>

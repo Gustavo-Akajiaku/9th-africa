@@ -7,13 +7,35 @@ export const POST = async (request) => {
   try {
     const body = await request.json();
     const email = body.email;
+    const fullname = body.fullname;
+    const phoneNumber = body.phoneNumber;
     const role = body.role;
     const user = await User.findOne({ email });
+    const fname = await User.findOne({ fullname });
+    const phoneNum = await User.findOne({ phoneNumber });
+
+    if (fname) {
+      return new NextResponse(
+        JSON.stringify({
+          message: "User already exit with the name.",
+        }),
+        { status: 400 }
+      );
+    }
 
     if (user) {
       return new NextResponse(
         JSON.stringify({
           message: "User already exit with the email.",
+        }),
+        { status: 400 }
+      );
+    }
+
+    if (phoneNum) {
+      return new NextResponse(
+        JSON.stringify({
+          message: "User already exit with the phone number.",
         }),
         { status: 400 }
       );
@@ -46,8 +68,11 @@ export const POST = async (request) => {
       { status: 400 }
     );
   } catch (error) {
-    return new NextResponse("Error in creating user" + error.message, {
-      status: 500,
-    });
+    return new NextResponse(
+      JSON.stringify({
+        message: `Opps! Something went wrong. ${error.message}`,
+      }),
+      { status: 500 }
+    );
   }
 };
